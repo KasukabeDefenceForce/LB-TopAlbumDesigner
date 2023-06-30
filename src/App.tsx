@@ -37,15 +37,15 @@ function GalleryTile(props: GalleryTileProps) {
   );
 
   return (
-    <button name={name} onClick={updateStyleCallback}>
+    <div onClick={updateStyleCallback}>
       <object className="gallery-tile" data={url}></object>
-    </button>
+    </div>
   );
 }
 
 function Gallery(props: GalleryProps) {
   return (
-    <div>
+    <div className="d-flex">
       <GalleryTile
         name={StyleEnum.designerTop5}
         onStyleSelect={props.onStyleSelect}
@@ -79,6 +79,19 @@ function Preview(props: PreviewProps) {
   return <object className="preview" data={props.url} width={700} height={700}></object>;
 }
 
+function copyLink(){
+  var copyText = document.getElementById("Link") as HTMLInputElement;
+
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  alert("Copied the text: " + copyText.value);
+}
 function ArtCreator() {
   // NOTE: Add useThrottle to slow down updates of the userName field.
   // Add images for the gallery, don't compose them on the fly
@@ -171,26 +184,40 @@ function ArtCreator() {
   return (
     <div className="row">
       <div className="col-sm-7">
-          <div id="bb">
+          <div className="artwork-container">
             <Gallery onStyleSelect={updateStyleButtonCallback} />
             <hr></hr>
             <Preview url={previewUrl} />
-            <div className="d-flex border" id="qq">
-                <div id="abc"className="d-flex">
-                  <FontAwesomeIcon icon={faUser} />
-                </div>
-                <div>
-                  add to profile, refresh 
-                    <select className="dropdown-list1" value={style} onChange={updateStyleCallback}>
+            <div className="d-flex align-items-center">
+                  <div className="d-flex user-icon-container">
+                    <FontAwesomeIcon icon={faUser} />
+                  </div>
+                  <div className="profile-container">
+                    add to profile, refresh
+                    <select className="borderless-dropdown-list" value={style} onChange={updateStyleCallback}>
                       <option value="daily">daily</option>
                       <option value="weekly">Weekly</option>
                       <option value="Monthly">Monthly</option>
                     </select>
-                </div>
-               <FontAwesomeIcon icon={faLink} />
-               <FontAwesomeIcon icon={faDownload} />
-               <FontAwesomeIcon icon={faCode} />
-               <FontAwesomeIcon icon={faClipboard} />
+                  </div>
+                  <div className="icon-bar">
+                    <div className="d-flex icon-tray">
+                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faLink} />
+                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faDownload} />
+                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faCode} />
+                    </div>
+                    <div className="d-flex border p-0 link-container">
+                      <input
+                        type="text"
+                        id="Link"
+                        placeholder={previewUrl}
+                        disabled
+                      />
+                      <button className="d-flex copy-link-container">
+                        <FontAwesomeIcon onClick={copyLink} icon={faClipboard}/>
+                      </button>
+                    </div>
+                  </div>
             </div>
           </div>
         </div>
