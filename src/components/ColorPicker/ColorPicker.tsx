@@ -1,6 +1,11 @@
 import "./ColorPicker.css";
 
-const ColorPicker = ({ firstColor, secondColor }) => {
+type ColorPickerProps = {
+    firstColor: string;
+    secondColor: string;
+}
+
+const ColorPicker = ({ firstColor, secondColor }: ColorPickerProps) => {
   return (
     <div className="color-picker">
       <div 
