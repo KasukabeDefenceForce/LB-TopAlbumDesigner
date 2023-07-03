@@ -9,8 +9,7 @@
 }
 
 .basic-settings-container{
-opacity: 0.10000000149011612;
-  background: linear-gradient(245deg, #000 0%, rgba(0, 0, 0, 0.00) 100%);
+  background: linear-gradient(50deg, hsl(0, 0%, 87%), transparent);
   padding-right: 20px;
   padding-left: 20px;
   padding-top: 12px;
@@ -18,8 +17,7 @@ opacity: 0.10000000149011612;
 }
 
 .advanced-settings-container {
-opacity: 0.10000000149011612;
-  background: linear-gradient(245deg, #000 0%, rgba(0, 0, 0, 0.00) 100%);
+  background: linear-gradient(50deg, hsl(0, 0%, 87%), transparent);
   padding-right: 20px;
   padding-left: 20px;
   padding-top: 12px;
@@ -27,8 +25,7 @@ opacity: 0.10000000149011612;
 }
 
 .generate-button-container {
-opacity: 0.10000000149011612;
-  background: linear-gradient(245deg, #000 0%, rgba(0, 0, 0, 0.00) 100%);
+  background: linear-gradient(50deg, hsl(0, 0%, 87%), transparent);
   padding-right: 20px;
   padding-left: 20px;
   padding-top: 12px;
