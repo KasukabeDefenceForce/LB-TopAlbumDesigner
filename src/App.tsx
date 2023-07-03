@@ -1,9 +1,12 @@
-import { faCircleQuestion, faClipboard, faCloudArrowUp, faCode, faDownload, faLink, faPaintBrush, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCircleQuestion, faCloudArrowUp, faPaintBrush } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useState } from "react";
 import "./App.css";
 import ColorPicker from "./components/ColorPicker/ColorPicker";
 import DropdownList from "./components/DropdownList/DropdownList";
+import Gallery from "./components/Gallery/Gallery";
+import IconTray from "./components/IconTray/IconTray";
+import Preview from "./components/Preview/Preview";
 import ToggleOption from "./components/ToggleOption/ToggleOption";
 
 enum StyleEnum {
@@ -13,85 +16,6 @@ enum StyleEnum {
   gridStats = "grid-stats",
 }
 
-type GalleryTileProps = {
-  name: StyleEnum;
-  url: string;
-  onStyleSelect: (styleName: string) => void;
-};
-
-type GalleryProps = {
-  onStyleSelect: (styleName: string) => void;
-};
-
-type PreviewProps = {
-  url: string;
-};
-
-function GalleryTile(props: GalleryTileProps) {
-  const { name, url, onStyleSelect } = props;
-  const updateStyleCallback = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      onStyleSelect(name);
-    },
-    [name, onStyleSelect]
-  );
-
-  return (
-    <div onClick={updateStyleCallback}>
-      <object className="gallery-tile" data={url}></object>
-    </div>
-  );
-}
-
-function Gallery(props: GalleryProps) {
-  return (
-    <div className="d-flex">
-      <GalleryTile
-        name={StyleEnum.designerTop5}
-        onStyleSelect={props.onStyleSelect}
-        url={"https://api.listenbrainz.org/1/art/designer-top-5/rob/week/750"}
-      />
-      <GalleryTile
-        name={StyleEnum.designerTop10}
-        onStyleSelect={props.onStyleSelect}
-        url={"https://api.listenbrainz.org/1/art/designer-top-10/rob/week/750"}
-      />
-      <GalleryTile
-        name={StyleEnum.lPsOnTheFloor}
-        onStyleSelect={props.onStyleSelect}
-        url={"https://api.listenbrainz.org/1/art/lps-on-the-floor/rob/week/750"}
-      />
-      <GalleryTile
-        name={StyleEnum.gridStats}
-        onStyleSelect={props.onStyleSelect}
-        url={"https://api.listenbrainz.org/1/art/grid-stats/rob/month/5/0/750"}
-      />
-      <GalleryTile
-        name={StyleEnum.gridStats}
-        onStyleSelect={props.onStyleSelect}
-        url={"https://api.listenbrainz.org/1/art/grid-stats/rob/week/4/0/750"}
-      />
-    </div>
-  );
-}
-
-function Preview(props: PreviewProps) {
-  return <object className="preview" data={props.url} width={700} height={700}></object>;
-}
-
-function copyLink(){
-  var copyText = document.getElementById("Link") as HTMLInputElement;
-
-  // Select the text field
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); // For mobile devices
-
-   // Copy the text inside the text field
-  navigator.clipboard.writeText(copyText.value);
-
-  // Alert the copied text
-  alert("Copied the text: " + copyText.value);
-}
 function ArtCreator() {
   // NOTE: Add useThrottle to slow down updates of the userName field.
   // Add images for the gallery, don't compose them on the fly
@@ -100,12 +24,51 @@ function ArtCreator() {
   const [timeRange, setTimeRange] = useState("week");
   const [gridSize, setGridSize] = useState(4);
   const [gridStyle, setGridStyle] = useState(0);
+  const [font, setFont] = useState("");
+  const [textColor, setTextColor] =  useState("");
+  const [firstBgColor, setFirstBgColor] = useState("");
+  const [secondBgColor, setSecondBgColor] = useState("");
+  const [genres, setGenres] = useState("");
+  const [usersToggle, setUsersToggle] = useState(false);
+  const [dateToggle, setDateToggle] = useState(false);
+  const [rangeToggle, setRangeToggle] = useState(false);
+  const [totalToggle, setTotalToggle] = useState(false);
+  const [genresToggle, setGenresToggle] = useState(false);
+  const [vaToggle, setVaToggle] = useState(false);
+
+  const userToggler = useCallback(() => {
+    usersToggle ? setUsersToggle(false): setUsersToggle(true);
+  }, [usersToggle]);
+  const dateToggler = useCallback(() => {
+    dateToggle? setDateToggle(false): setDateToggle(true);
+  }, [dateToggle]);
+  const rangeToggler = useCallback(() => {
+    rangeToggle? setRangeToggle(false): setRangeToggle(true);
+  }, [rangeToggle]);
+  const totalToggler = useCallback(() => {
+    totalToggle? setTotalToggle(false): setTotalToggle(true);
+  }, [totalToggle])
+  const genresToggler = useCallback(() => {
+    genresToggle? setGenresToggle(false): setGenresToggle(true);
+  },[genresToggle])
+  const vaToggler = useCallback(() => {
+    vaToggle? setVaToggle(false): setVaToggle(true);
+  }, [vaToggle])
+  
   const styleOpts = [
     [StyleEnum.designerTop5, "Designer top 5"],
     [StyleEnum.designerTop10, "Designer top 10"],
     [StyleEnum.lPsOnTheFloor, "LPs on the floor"],
     [StyleEnum.gridStats, "Stats grid"]
   ];
+
+  const galleryOpts = [
+    {name: StyleEnum.designerTop5, url:"https://api.listenbrainz.org/1/art/designer-top-5/rob/week/750"},
+    {name: StyleEnum.designerTop10, url:"https://api.listenbrainz.org/1/art/designer-top-10/rob/week/750"},
+    {name: StyleEnum.lPsOnTheFloor, url:"https://api.listenbrainz.org/1/art/lps-on-the-floor/rob/week/750"},
+    {name: StyleEnum.gridStats, url:"https://api.listenbrainz.org/1/art/grid-stats/rob/month/5/0/750"}
+  ];
+
   const timeRangeOpts = [
     ["week", "Last week"],
     ["month","Last month"],
@@ -122,21 +85,6 @@ function ArtCreator() {
     ["Integer", "Integer"],
     ["Sans Serif", "Sans Serif"]
   ];
-
-  const toggleOpts = [
-    ["Users", "Users"],
-    ["Date", "Date"],
-    ["Range", "Range"],
-    ["Total", "Total"],
-    ["Genres", "Genres"],
-  ];
-
-  const timeOpts=[
-    ["daily", "daily"],
-    ["weekly", "weekly"],
-    ["Monthly", "Monthly"],
-    ["Yearly", "Yearly"]
-  ]
 
   const updateStyleButtonCallback = useCallback(
     (name: string) => {
@@ -162,6 +110,27 @@ function ArtCreator() {
     [setTimeRange]
   );
 
+  const updateTextColourCallback = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setTextColor(event.target.value),
+    [setTextColor]
+  );
+  const updateFirstBgColorCallback = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setFirstBgColor(event.target.value),
+    [setFirstBgColor]
+  );
+  const updateSecondBgColorCallback = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setSecondBgColor(event.target.value),
+    [setSecondBgColor]
+  );
+  const updateGenresCallback = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setGenres(event.target.value),
+    [setGenres]
+  );
+
   const updateGridSizeCallback = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) =>
       setGridSize(Number(event.target.value)),
@@ -174,6 +143,10 @@ function ArtCreator() {
     [setGridStyle]
   );
 
+  const updateFontCallback = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFont(event.target.value);
+  }, [setFont]);
+
   var previewUrl = "";
   if (style === "grid-stats") {
     previewUrl = `https://api.listenbrainz.org/1/art/${style}/${userName}/${timeRange}/${gridSize}/${gridStyle}/750`;
@@ -185,40 +158,10 @@ function ArtCreator() {
     <div className="row">
       <div className="col-sm-7">
           <div className="artwork-container">
-            <Gallery onStyleSelect={updateStyleButtonCallback} />
+            <Gallery currentStyle={style} galleryOpts={galleryOpts} onStyleSelect={updateStyleButtonCallback} />
             <hr></hr>
             <Preview url={previewUrl} />
-            <div className="d-flex align-items-center">
-                  <div className="d-flex user-icon-container">
-                    <FontAwesomeIcon icon={faUser} />
-                  </div>
-                  <div className="profile-container">
-                    add to profile, refresh
-                    <select className="borderless-dropdown-list" value={style} onChange={updateStyleCallback}>
-                      <option value="daily">daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="Monthly">Monthly</option>
-                    </select>
-                  </div>
-                  <div className="icon-bar">
-                    <div className="d-flex icon-tray">
-                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faLink} />
-                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faDownload} />
-                      <FontAwesomeIcon className="icon-bar-item mx-2" icon={faCode} />
-                    </div>
-                    <div className="d-flex border p-0 link-container">
-                      <input
-                        type="text"
-                        id="Link"
-                        placeholder={previewUrl}
-                        disabled
-                      />
-                      <button className="d-flex copy-link-container">
-                        <FontAwesomeIcon onClick={copyLink} icon={faClipboard}/>
-                      </button>
-                    </div>
-                  </div>
-            </div>
+            <IconTray previewUrl={previewUrl}/>
           </div>
         </div>
       <div className="col-sm-2 p-0 offset-md-2">
@@ -239,8 +182,6 @@ function ArtCreator() {
               <input
                 className="ms-4"
                 type="text"
-                value={userName}
-                onChange={updateUserNameCallback}
                 placeholder="5"
                 />
             </div>
@@ -263,8 +204,7 @@ function ArtCreator() {
                   <input
                     className="input-color-container"
                     type="text"
-                    value=""
-                    onChange={updateUserNameCallback}
+                    onChange={updateTextColourCallback}
                     placeholder="#321529"
                   />
                   <div className="d-flex border icon-container">
@@ -277,9 +217,8 @@ function ArtCreator() {
               <div className="color-container">
                 <input
                   type="text"
-                  value=""
                   className="border input-color-container"
-                  onChange={updateUserNameCallback}
+                  onChange={updateFirstBgColorCallback}
                   placeholder="#321529"
                 />
                 <div className="d-flex border icon-container">
@@ -290,9 +229,8 @@ function ArtCreator() {
             <div className="color-container">
               <input
               type="text"
-              value=""
               className="border input-color-container"
-              onChange={updateUserNameCallback}
+              onChange={updateSecondBgColorCallback}
               placeholder="#321529"
               />
               <div className="d-flex border icon-container">
@@ -311,25 +249,24 @@ function ArtCreator() {
               Genres: <FontAwesomeIcon icon={faCircleQuestion} /><br/>
               <input
                 type="text"
-                value=""
                 className="border"
-                onChange={updateUserNameCallback}
                 placeholder=""
+                onChange={updateGenresCallback}
               />
             </div>
             <div>
-              <ToggleOption buttonName={"Users"}/>
-              <ToggleOption buttonName={"Date"}/> 
-              <ToggleOption buttonName={"Range"}/> 
-              <ToggleOption buttonName={"Total"}/> 
-              <ToggleOption buttonName={"Genres"}/> 
+              <ToggleOption onClick={userToggler} buttonName={"Users"}/>
+              <ToggleOption onClick={dateToggler} buttonName={"Date"}/> 
+              <ToggleOption onClick={rangeToggler} buttonName={"Range"}/> 
+              <ToggleOption onClick={totalToggler} buttonName={"Total"}/> 
+              <ToggleOption onClick={genresToggler} buttonName={"Genres"}/> 
             </div>
             <div>
               Font:<br/>
-              <DropdownList opts={fontOpts} value={style} onChange={updateStyleCallback}/>
+              <DropdownList opts={fontOpts} value={style} onChange={updateFontCallback}/>
             </div>
             <div>
-              <ToggleOption buttonName={"Ignore VA"}/>
+              <ToggleOption onClick={vaToggler} buttonName={"Ignore VA"}/>
             </div>
           </div>
         </div>
